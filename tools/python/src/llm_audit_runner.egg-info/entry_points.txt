@@ -1,2 +1,0 @@
-[console_scripts]
-llm-audit-runner = llm_audit_runner.cli:main
