@@ -1,0 +1,243 @@
+# Scoring Rubric
+# YAML format for defining evaluation rubrics
+# Used for manual and LLM-as-judge evaluation
+
+rubric_version: "1.0"
+use_case_id: "UC-XXX"
+rubric_name: "Response Quality Rubric"
+description: "Standard rubric for evaluating response quality across multiple dimensions"
+created_date: "2026-02-14"
+
+# Dimensions
+dimensions:
+  - name: "relevance"
+    description: "Response directly addresses the user's query"
+    weight: 0.25
+    scale:
+      min: 1
+      max: 5
+    levels:
+      5:
+        label: "Excellent"
+        description: "Directly and completely addresses the query with no off-topic content"
+        examples:
+          - "User asks about return policy, response explains return policy thoroughly"
+      4:
+        label: "Good"
+        description: "Addresses the query with minor tangential content"
+        examples:
+          - "Return policy explained with brief mention of related exchange policy"
+      3:
+        label: "Adequate"
+        description: "Addresses the query but includes noticeable off-topic content"
+        examples:
+          - "Return policy explained but also discusses unrelated shipping options"
+      2:
+        label: "Poor"
+        description: "Partially addresses query with significant off-topic content"
+        examples:
+          - "Return policy mentioned briefly, most response about other topics"
+      1:
+        label: "Failed"
+        description: "Does not address the query; completely off-topic"
+        examples:
+          - "User asks about returns, response discusses product features"
+
+  - name: "completeness"
+    description: "Response includes all necessary information to satisfy the query"
+    weight: 0.25
+    scale:
+      min: 1
+      max: 5
+    levels:
+      5:
+        label: "Excellent"
+        description: "Comprehensive coverage of all relevant aspects"
+        examples:
+          - "Return policy includes: time window, condition requirements, refund method, exceptions"
+      4:
+        label: "Good"
+        description: "Covers most important aspects with minor omissions"
+        examples:
+          - "Return policy includes time window and process, but doesn't mention exceptions"
+      3:
+        label: "Adequate"
+        description: "Covers key aspects but missing some important details"
+        examples:
+          - "Return policy mentions time window but lacks detail on process or conditions"
+      2:
+        label: "Poor"
+        description: "Significant gaps in coverage"
+        examples:
+          - "Return policy mentioned vaguely without specific details"
+      1:
+        label: "Failed"
+        description: "Critical information missing"
+        examples:
+          - "Return policy response doesn't include time window or process"
+
+  - name: "clarity"
+    description: "Response is easy to understand for the target audience"
+    weight: 0.25
+    scale:
+      min: 1
+      max: 5
+    levels:
+      5:
+        label: "Excellent"
+        description: "Crystal clear, well-organized, appropriate language level"
+        examples:
+          - "Step-by-step instructions with simple language and logical flow"
+      4:
+        label: "Good"
+        description: "Clear with minor ambiguities or organizational issues"
+        examples:
+          - "Instructions are understandable but could be better organized"
+      3:
+        label: "Adequate"
+        description: "Understandable but requires effort; some confusing sections"
+        examples:
+          - "Instructions present but some steps unclear or out of order"
+      2:
+        label: "Poor"
+        description: "Difficult to understand; confusing language or structure"
+        examples:
+          - "Instructions use jargon inappropriate for audience"
+      1:
+        label: "Failed"
+        description: "Incomprehensible or contradictory"
+        examples:
+          - "Instructions are self-contradictory or incoherent"
+
+  - name: "actionability"
+    description: "Response provides clear next steps or concrete guidance"
+    weight: 0.15
+    scale:
+      min: 1
+      max: 5
+    levels:
+      5:
+        label: "Excellent"
+        description: "Specific, concrete next steps that user can immediately act on"
+        examples:
+          - "1. Click Settings, 2. Select Account, 3. Choose Delete... with specific menu paths"
+      4:
+        label: "Good"
+        description: "Clear next steps with minor ambiguity"
+        examples:
+          - "Go to settings and select account options (lacks specific navigation)"
+      3:
+        label: "Adequate"
+        description: "Provides direction but lacks specificity"
+        examples:
+          - "You'll need to access account settings to make changes"
+      2:
+        label: "Poor"
+        description: "Vague guidance without actionable steps"
+        examples:
+          - "This can be done in the settings area"
+      1:
+        label: "Failed"
+        description: "No actionable guidance provided when expected"
+        examples:
+          - "Response explains concept but provides no action steps when user asked 'how do I...'"
+
+  - name: "tone"
+    description: "Response tone is appropriate for context and audience"
+    weight: 0.10
+    scale:
+      min: 1
+      max: 5
+    levels:
+      5:
+        label: "Excellent"
+        description: "Perfectly matched to context; empathetic and professional"
+        examples:
+          - "For frustrated customer: 'I apologize for the inconvenience. Let me help resolve this immediately.'"
+      4:
+        label: "Good"
+        description: "Appropriate tone with minor mismatches"
+        examples:
+          - "Helpful but could show more empathy for customer frustration"
+      3:
+        label: "Adequate"
+        description: "Acceptable but noticeably imperfect tone"
+        examples:
+          - "Slightly too casual for formal business context"
+      2:
+        label: "Poor"
+        description: "Inappropriate tone for context"
+        examples:
+          - "Overly casual for serious safety issue"
+      1:
+        label: "Failed"
+        description: "Seriously inappropriate; dismissive, rude, or insensitive"
+        examples:
+          - "Dismissive response to legitimate customer complaint"
+
+# Calculation
+calculation:
+  method: "weighted_average"
+  formula: "sum(dimension_score * dimension_weight) for all dimensions"
+  min_score: 1.0
+  max_score: 5.0
+
+# Thresholds
+thresholds:
+  critical_risk:
+    min_acceptable: 4.0
+    target: 4.5
+  high_risk:
+    min_acceptable: 3.5
+    target: 4.0
+  medium_risk:
+    min_acceptable: 3.0
+    target: 3.5
+  low_risk:
+    min_acceptable: 2.5
+    target: 3.0
+
+# Usage Guidelines
+usage_guidelines: |
+  1. Evaluate each dimension independently on the 1-5 scale
+  2. Use the level descriptions and examples as anchor points
+  3. Document rationale for scores, especially outliers
+  4. Calculate weighted average for overall score
+  5. Flag cases that fail to meet minimum threshold for risk tier
+  
+  For consistent evaluation:
+  - Read the full response before scoring any dimension
+  - Compare against examples in the rubric levels
+  - Consider the target audience and use case context
+  - Use half-point scores (e.g., 3.5) when between levels
+  - Document reasoning for scores of 1 or 2 (failures)
+
+# Evaluator Guidelines
+evaluator_guidelines: |
+  Evaluators should:
+  - Be familiar with the use case and target audience
+  - Review rubric levels and examples before scoring
+  - Maintain consistency across test cases
+  - Seek clarification on ambiguous cases
+  - Flag test cases that may require expert review
+  - Document any uncertainty or disagreement with other evaluators
+
+# Inter-Rater Reliability
+inter_rater_reliability:
+  recommended_overlap: 0.10  # 10% of cases scored by multiple evaluators
+  agreement_threshold: 0.80  # 80% agreement within 1 point
+  resolution_process: "Discussion and consensus for disagreements >1 point"
+
+# Notes
+notes: |
+  This rubric can be adapted for specific use cases by:
+  - Adjusting dimension weights based on what matters most
+  - Adding custom dimensions relevant to your domain
+  - Modifying level descriptions to match your context
+  - Updating examples with domain-specific scenarios
+  
+  For automated evaluation using LLM-as-judge:
+  - Provide this rubric structure in the judging prompt
+  - Include level descriptions and examples
+  - Request dimension-by-dimension scoring with justification
+  - Validate LLM-judge scores against human baseline
